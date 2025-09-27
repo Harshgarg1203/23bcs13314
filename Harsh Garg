@@ -1,0 +1,98 @@
+Practice 1 node.js
+index.js
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Array to store employees
+let employees = [];
+
+// Add employee
+function addEmployee(callback) {
+  rl.question('Enter Employee ID: ', (id) => {
+    if (employees.find(emp => emp.id === id.trim())) {
+      console.log('Employee ID already exists.');
+      return callback();
+    }
+    rl.question('Enter Employee Name: ', (name) => {
+      employees.push({ id: id.trim(), name: name.trim() });
+      console.log(Employee ${name.trim()} added successfully!);
+      callback();
+    });
+  });
+}
+
+// List employees
+function listEmployees(callback) {
+  if (employees.length === 0) {
+    console.log('No employees found.');
+  } else {
+    console.log('\n--- Employee List ---');
+    employees.forEach(emp => {
+      console.log(ID: ${emp.id} | Name: ${emp.name});
+    });
+  }
+  callback();
+}
+
+// Remove employee
+function removeEmployee(callback) {
+  rl.question('Enter Employee ID to remove: ', (id) => {
+    const index = employees.findIndex(emp => emp.id === id.trim());
+    if (index === -1) {
+      console.log('Employee not found.');
+    } else {
+      const removed = employees.splice(index, 1);
+      console.log(Employee ${removed[0].name} removed successfully.);
+    }
+    callback();
+  });
+}
+
+// Export functions and readline interface
+module.exports = {
+  rl,
+  addEmployee,
+  listEmployees,
+  removeEmployee
+};
+
+app.js
+const { rl, addEmployee, listEmployees, removeEmployee } = require('./routes/index');
+
+// Show main menu
+function showMenu() {
+  console.log('\n=== Employee Management System ===');
+  console.log('1. Add Employee');
+  console.log('2. List Employees');
+  console.log('3. Remove Employee');
+  console.log('4. Exit');
+
+  rl.question('Choose an option: ', (option) => {
+    switch(option.trim()) {
+      case '1':
+        addEmployee(showMenu);
+        break;
+      case '2':
+        listEmployees(showMenu);
+        break;
+      case '3':
+        removeEmployee(showMenu);
+        break;
+      case '4':
+        console.log('Exiting...');
+        rl.close();
+        break;
+      default:
+        console.log('Invalid option, try again.');
+        showMenu();
+    }
+  });
+}
+
+// Start CLI
+showMenu();
+
